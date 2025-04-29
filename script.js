@@ -1,4 +1,4 @@
-const apiKey = 'AIzaSyDwDOhGVjnZAGaXzBQXX6NXILV7qv7LXpc'; // Ganti dengan API Key Gemini dari Google
+const apiKey = 'AIzaSyBpqcGf3U4vqTnx-FRlFuY72Fre9ol8x9U'; // Ganti dengan API Key Gemini dari Google
 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 let uploadedFiles = [];
 
