@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXORA AI - New AI Masa Kini</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .chat-area::before {
+      content: 'N';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 20vw;
+      font-weight: 700;
+      color: #3182ce;
+      opacity: 0.1;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    @media (min-width: 1024px) {
+      .chat-area::before {
+        font-size: 200px;
+      }
+    }
+
+    .chat-bubble {
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .chat-bubble.user {
+      margin-left: auto;
+      margin-right: 1rem;
+    }
+
+    .chat-bubble.ai {
+      margin-right: auto;
+      margin-left: 1rem;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeOut {
+      from { opacity: 1; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(-10px); }
+    }
+
+    .spinner {
+      display: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #ffffff;
+      border-top: 2px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    .spinner.active {
+      display: inline-block;
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+
+    .dot-bouncing {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .dot-bouncing span {
+      width: 8px;
+      height: 8px;
+      background-color: #3182ce;
+      border-radius: 50%;
+      animation: bounce 0.6s infinite alternate;
+    }
+
+    .dot-bouncing span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .dot-bouncing span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes bounce {
+      from { transform: translateY(0); }
+      to { transform: translateY(-10px); }
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: #1f2937;
+      --bg-secondary: #374151;
+      --bg-tertiary: #4b5563;
+      --text-primary: #f3f4f6;
+      --text-secondary: #d1d5db;
+      --border-primary: #4b5563;
+      --bubble-user-bg: #2563eb;
+      --bubble-ai-bg: #4b5563;
+    }
+
+    [data-theme="dark"] .bg-gray-100 {
+      background-color: var(--bg-primary);
+    }
+
+    [data-theme="dark"] .text-gray-900 {
+      color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .bg-white {
+      background-color: var(--bg-secondary);
+    }
+
+    [data-theme="dark"] .bg-gray-900 {
+      background-color: var(--bg-tertiary);
+    }
+
+    [data-theme="dark"] .text-white {
+      color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .border-gray-200 {
+      border-color: var(--border-primary);
+    }
+
+    [data-theme="dark"] .bg-blue-100 {
+      background-color: var(--bubble-ai-bg);
+    }
+
+    [data-theme="dark"] .bg-blue-600 {
+      background-color: var(--bubble-user-bg);
+    }
+
+    [data-theme="dark"] .text-gray-600 {
+      color: var(--text-secondary);
+    }
+
+    [data-theme="dark"] .bg-gray-200 {
+      background-color: var(--bg-tertiary);
+    }
+
+    [data-theme="dark"] .bg-gray-50 {
+      background-color: var(--bg-tertiary);
+    }
+
+    [data-theme="dark"] .text-gray-400 {
+      color: var(--text-secondary);
+    }
+
+    [data-theme="dark"] .bg-gray-800 {
+      background-color: var(--bg-tertiary);
+    }
+
+    [data-theme="dark"] .bg-gray-700 {
+      background-color: var(--bubble-ai-bg);
+    }
+
+    .icon-btn {
+      color: #3182ce;
+      font-size: 12px;
+      transition: color 0.2s ease-in-out;
+    }
+
+    .icon-btn:hover {
+      color: #2563eb;
+    }
+
+    .upload-btn, .submit-btn {
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .upload-btn:hover, .submit-btn:hover {
+      transform: scale(1.1);
+      opacity: 0.9;
+    }
+
+    .dropdown-menu {
+      animation: slideDown 0.2s ease-out;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="font-inter bg-gray-100 text-gray-900 flex min-h-screen overflow-hidden" data-theme="light">
+  <div class="flex w-full h-screen relative">
+    <!-- Sidebar -->
+    <div id="sidebar" class="fixed top-0 left-0 h-full bg-gray-900 text-white p-4 flex flex-col shadow-lg transform transition-transform duration-300 ease-in-out z-50 w-4/5 sm:w-64 will-change-transform" data-toggle="closed" aria-label="Sidebar navigasi">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2">
+          <i class="fas fa-home text-xl" aria-hidden="true"></i>
+          <h1 class="font-dm-sans text-xl font-medium">NEXORA AI</h1>
+        </div>
+        <button id="sidebarToggle" class="sidebar-toggle text-white text-xl p-3 hover:opacity-80 pointer-events-auto z-50 touch-action-manipulation" aria-label="Toggle sidebar">
+          <i class="fas fa-times" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="flex flex-col gap-2 mb-4">
+        <div class="flex gap-2">
+          <button class="action-btn flex-1 bg-blue-600 text-white font-dm-sans text-sm font-medium py-2 px-3 rounded-lg hover:bg-blue-700 transition flex items-center gap-2 justify-center" onclick="clearAllChat()" aria-label="Hapus semua riwayat chat">
+            <i class="fas fa-trash" aria-hidden="true"></i> Clear All
+          </button>
+          <button class="action-btn flex-1 bg-blue-600 text-white font-dm-sans text-sm font-medium py-2 px-3 rounded-lg hover:bg-blue-700 transition flex items-center gap-2 justify-center" onclick="newChat()" aria-label="Mulai chat baru">
+            <i class="fas fa-plus" aria-hidden="true"></i> New Chat
+          </button>
+        </div>
+        <div class="flex flex-col gap-2">
+          <input type="text" id="historyFilter" class="w-full p-2 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 font-inter text-sm focus:outline-none focus:border-blue-600" placeholder="Filter riwayat..." aria-label="Filter riwayat berdasarkan kata kunci">
+          <button class="action-btn w-full bg-blue-600 text-white font-dm-sans text-sm font-medium py-2 px-3 rounded-lg hover:bg-blue-700 transition flex items-center gap-2 justify-center" onclick="downloadHistory()" aria-label="Unduh riwayat chat">
+            <i class="fas fa-download" aria-hidden="true"></i> Unduh Riwayat
+          </button>
+        </div>
+        <select id="dateFilter" class="w-full p-2 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 font-inter text-sm focus:outline-none focus:border-blue-600" aria-label="Filter riwayat berdasarkan tanggal">
+          <option value="all">Semua Tanggal</option>
+          <option value="today">Hari Ini</option>
+          <option value="week">Minggu Ini</option>
+          <option value="month">Bulan Ini</option>
+        </select>
+      </div>
+      <div id="historyList" class="flex-1 flex flex-col gap-3 overflow-y-auto" role="list" aria-label="Daftar riwayat chat"></div>
+      <div class="mt-auto pt-4 border-t border-gray-700">
+        <p class="font-dm-sans text-sm text-gray-400 text-center">About Version 1.00 Beta</p>
+      </div>
+    </div>
+    <!-- Main Content -->
+    <div id="mainContent" class="flex-1 flex flex-col bg-white transition-all duration-300 ease-in-out">
+      <div class="flex items-center justify-between p-4 border-b border-gray-200">
+        <button id="openSidebarBtn" class="open-sidebar-btn bg-blue-600 text-white p-3 rounded-lg text-xl z-50 pointer-events-auto touch-action-manipulation hidden" aria-label="Buka sidebar">
+          <i class="fas fa-bars" aria-hidden="true"></i>
+        </button>
+        <button id="themeToggle" class="bg-gray-200 text-gray-600 p-2 rounded-lg hover:bg-gray-300 transition" aria-label="Toggle tema gelap atau terang">
+          <i class="fas fa-moon" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div id="chatArea" class="chat-area flex-1 overflow-y-auto p-4 flex flex-col gap-4 relative hidden" role="region" aria-label="Area obrolan">
+        <div id="responseOutput" role="list" aria-label="Daftar pesan obrolan"></div>
+      </div>
+      <div id="inputArea" class="p-4 bg-white border-t border-gray-200 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-11/12 max-w-lg transition-all duration-300 z-10 sm:max-w-xl">
+        <div class="flex flex-col sm:flex-row gap-2 relative">
+          <div class="relative flex items-center">
+            <button id="uploadBtn" class="upload-btn bg-gray-200 text-gray-600 p-2 rounded-l-lg border border-gray-200 hover:bg-gray-300 transition" title="Unggah File atau Gambar" aria-label="Unggah file atau gambar">
+              <i class="fas fa-paperclip" aria-hidden="true"></i>
+            </button>
+            <div id="uploadDropdown" class="absolute left-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg hidden z-20 dropdown-menu">
+              <button class="block w-full text-left px-4 py-2 text-sm text-gray-900 hover:bg-gray-100" onclick="document.getElementById('imageUpload').click()" aria-label="Unggah gambar">
+                <i class="fas fa-image mr-2" aria-hidden="true"></i> Unggah Gambar
+              </button>
+              <button class="block w-full text-left px-4 py-2 text-sm text-gray-900 hover:bg-gray-100" onclick="document.getElementById('fileUpload').click()" aria-label="Unggah file">
+                <i class="fas fa-file mr-2" aria-hidden="true"></i> Unggah File
+              </button>
+            </div>
+          </div>
+          <input type="file" id="imageUpload" accept="image/*" class="hidden" aria-hidden="true">
+          <input type="file" id="fileUpload" accept=".txt,.pdf,.doc,.docx" class="hidden" aria-hidden="true">
+          <textarea id="promptInput" class="flex-1 p-3 pl-12 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 font-inter text-sm resize-none focus:outline-none focus:border-blue-600 min-h-[60px]" placeholder="Tanyakan sesuatu kepada NEXORA AI..." rows="3" aria-label="Masukkan pertanyaan untuk NEXORA AI"></textarea>
+          <button id="submitBtn" class="submit-btn bg-blue-600 text-white p-2 rounded-r-lg border border-gray-200 hover:bg-blue-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed" aria-label="Kirim pertanyaan">
+            <i class="fas fa-paper-plane" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div id="fileList" class="flex flex-wrap gap-2 mt-2" role="list" aria-label="Daftar file yang diunggah"></div>
+      </div>
+      <div class="text-center p-2 bg-white text-gray-600 font-dm-sans text-sm border-t border-gray-200 z-10">
+        <i class="fas fa-code text-blue-600 mr-1" aria-hidden="true"></i> Developed Faizal 40 dan Faizal 46
+      </div>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.2/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="script.js"></script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'937fe2abfc29d6e5',t:'MTc0NTk0MTA5Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93800167580cd6cc',t:'MTc0NTk0MjM1NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+</body>
+</html>
